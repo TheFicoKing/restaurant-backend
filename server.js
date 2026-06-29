@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors'); // 1. ДОДАЈ ГО ОВА ГОРЕ
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ let reservations = [];
 const MAX_CAPACITY = 50; 
 
 // Среден слој (Middleware)
+app.use(cors()); // 2. ДОДАЈ ГО ОВА ПРЕД ДРУГИТЕ MIDDLEWARES!
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
