@@ -46,19 +46,27 @@ app.get('/quality-food', (req, res) => {
 app.post('/book-table', (req, res) => {
     const { name, email, datetime, select_person, special_request } = req.body;
     
-    // Пресметка на моментално резервирани места
     const currentBooked = reservations.reduce((sum, res) => sum + parseInt(res.people), 0);
     const requestedPeople = parseInt(select_person);
 
-    // Проверка дали има доволно слободни места
     if (currentBooked + requestedPeople > MAX_CAPACITY) {
-        return res.send(`
-            <script>
-                alert('Жалиме! Нема доволно слободни места за тој термин. Слободни места: ${MAX_CAPACITY - currentBooked}');
-                window.location.href = '/index.html#reservation';
-            </script>
-        `);
+        return res.status(400).json({ success: false, message: 'Нема доволно слободни места.' });
     }
+
+    const newReservation = {
+        id: reservations.length + 1,
+        name,
+        email,
+        date: datetime,
+        people: requestedPeople,
+        request: special_request || "Нема"
+    };
+
+    reservations.push(newReservation);
+
+    // ПОПРАВЕНО: Враќаме само статус за успешност во JSON формат
+    res.json({ success: true, message: 'Успешна резервација' });
+});
 
     // Зачувај ја резервацијата
     const newReservation = {
